@@ -54,6 +54,9 @@ class base_config(object):
         self.reg_weight = 0.01
         self.glove_aux_weight = 0.01
 
+        #misc not configuration related but uses the same arg parsing together with config
+        self.train_data_flag = True
+
 
 def train_config():
     return base_config()
@@ -117,10 +120,14 @@ def load_config(eval = False):
     config_path = log_path + "/{}-{}/config.json".format(config.run_name, config.run_comment)
     try:
         if os.path.exists(config_path):
+            load_epoch = config.load_epoch
             with open(config_path) as f:
                 dict_cfg = dict(json.load(f))
                 for k in dict_cfg:
                     setattr(config, k, dict_cfg[k])
+
+            #restore things that is from cmd line
+            config.load_epoch = load_epoch
     except:
         print("no config.json found, will create one instead")
     return config
@@ -147,4 +154,4 @@ def get_checkpoint_path(config):
 # get the last saved model path
 def get_model_path(config):
     return "outputs/{}/checkpoints/{}-{}/epoch_{}/model_weights.torch".format(
-        config.title, config.run_name, config.run_comment, config.load_epoch)
+        config.title, config.model_type, config.run_comment, config.load_epoch)
