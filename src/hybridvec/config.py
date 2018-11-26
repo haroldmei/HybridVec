@@ -93,11 +93,18 @@ def get_cfg_from_args():
     return args
 
 # use the saved config first, if not exist, generate from command line.
-def load_config():
+def load_config(eval = False):
     """
     Load in the right config file from desired model to evaluate
     """
     config = base_config()
+    # eval specific config
+    if eval == True:
+        config.batch_size = 16
+        config.dropout = 0
+        config.packing = False
+        config.input_method=INPUT_METHOD_ONE
+
     dict_cfg = vars(get_cfg_from_args())
     for k in dict_cfg:
         setattr(config, k, dict_cfg[k])
