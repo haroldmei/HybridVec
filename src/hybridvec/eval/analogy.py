@@ -12,9 +12,9 @@ from itertools import product
 
 #logger = logging.getLogger(__name__)
 import sklearn
-from eval_datasets.analogy import *
-from eval_utils import batched
-from embedding import Embedding
+from .eval_datasets.analogy import *
+from .eval_utils import batched
+from .embedding import Embedding
 
 class SimpleAnalogySolver(sklearn.base.BaseEstimator):
     """

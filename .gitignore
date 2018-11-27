@@ -6,4 +6,9 @@ runs/
 libs/
 outputs/
 env/
+build/
+dist/
+.idea/
+hybridvec.egg-info/
+nohup.out
 all_scalars.json
