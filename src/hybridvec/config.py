@@ -141,7 +141,7 @@ def save_config(config):
     model_path = "outputs/{}".format(config.title)
     log_path = model_path + '/logs'
     # a bit awkward since pytorch-monitor is going to change our config!
-    config_path = log_path + "/{}/config.json".format(config.run_name)
+    config_path = log_path + "/{}-{}/config.json".format(config.run_name, config.run_comment)
     with open(config_path, 'w') as f:
         json.dump(config.__dict__, f)
 
