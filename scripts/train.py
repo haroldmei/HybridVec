@@ -190,7 +190,14 @@ if __name__ == "__main__":
             total_iter += 1
 
         config.load_epoch = epoch + 1
-        torch.save(model.state_dict(), get_model_path(config))
+
+        out_dir = "outputs/def2vec/checkpoints/{}".format(config.run_name)
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir)
+        out_path = "outputs/def2vec/checkpoints/{}/epoch_{}".format(config.run_name, epoch + 1)
+        if not os.path.exists(out_path):
+            os.makedirs(out_path)
+        torch.save(model.state_dict(), out_path + "/" + config.save_path)
 
     writer.export_scalars_to_json("./all_scalars.json")
     writer.close()
