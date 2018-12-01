@@ -50,7 +50,12 @@ if __name__ == "__main__":
 
     # continue from last training
     config = load_config()
+
+    # pymonitor change things, not a good idea. I have to restore the one I passed in.
+    run_name = config.run_name
     writer, conf = init_experiment(config.__dict__)
+    config.run_name = run_name
+
     save_config(config)
     vocab = vocab.GloVe(name=config.vocab_source, dim=config.vocab_dim)
     print ('vocab dim', config.vocab_dim)
