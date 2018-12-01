@@ -29,7 +29,6 @@ class base_config(object):
         self.eval_freq = 1000
         self.save_path="model_weights.torch"
         self.embedding_log_size = 10000
-
         # data loading params
         self.num_workers = 8
         self.packing=True
