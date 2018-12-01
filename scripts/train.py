@@ -33,11 +33,6 @@ from tensorboardX import SummaryWriter
 
 DEBUG_LOG = False
 
-config = train_config()
-
-TRAIN_FILE = 'data/glove/train_glove.%s.%sd.txt'%(config.vocab_source,config.vocab_dim)
-VAL_FILE = 'data/glove/val_glove.%s.%sd.txt'%(config.vocab_source, config.vocab_dim)
-
 def weights_init_xavier(m):
     """
     Initialize according to Xavier initialization or default initialization.
@@ -49,16 +44,19 @@ def weights_init_xavier(m):
         nn.init.xavier_normal(m.weight_ih_l0)
 
 if __name__ == "__main__":
-    vocab = vocab.GloVe(name=config.vocab_source, dim=config.vocab_dim)
-    use_gpu = torch.cuda.is_available()
 
+    use_gpu = torch.cuda.is_available()
     print("Using GPU:", use_gpu)
-    print ('vocab dim', config.vocab_dim)
 
     # continue from last training
     config = load_config()
     writer, conf = init_experiment(config.__dict__)
     save_config(config)
+    vocab = vocab.GloVe(name=config.vocab_source, dim=config.vocab_dim)
+    print ('vocab dim', config.vocab_dim)
+
+    TRAIN_FILE = 'data/glove/train_glove.%s.%sd.txt' % (config.vocab_source, config.vocab_dim)
+    VAL_FILE = 'data/glove/val_glove.%s.%sd.txt' % (config.vocab_source, config.vocab_dim)
 
     model_type = config.model_type
     model_path = get_model_path(config)
