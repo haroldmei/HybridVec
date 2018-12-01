@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import copy
 
 import argparse
 import torch
@@ -50,7 +51,10 @@ if __name__ == "__main__":
 
     # continue from last training
     config = load_config()
-    writer, conf = init_experiment(config.__dict__)
+
+    # py monitor changes config...
+    config_cp = load_config()
+    writer, conf = init_experiment(config_cp.__dict__)
     save_config(config)
     vocab = vocab.GloVe(name=config.vocab_source, dim=config.vocab_dim)
     print ('vocab dim', config.vocab_dim)
