@@ -3,7 +3,10 @@ import json
 import argparse
 from .loader import *
 
-
+""" 
+Please do not initialize a None for any field, 
+otherwise the type info will not be available, 
+"""
 class base_config(object):
     def __init__ (self):
         self.title="def2vec"
@@ -111,7 +114,7 @@ def load_config(eval = False):
     dict_cfg = vars(get_cfg_from_args())
     for k in dict_cfg:
         dataT = type(getattr(config,k))
-        setattr(config, k, dict_cfg[k])
+        setattr(config, k, dataT(dict_cfg[k]))
 
     # follow the current convention
     model_path = "outputs/{}".format(config.title)
@@ -126,7 +129,7 @@ def load_config(eval = False):
                 dict_cfg = dict(json.load(f))
                 for k in dict_cfg:
                     dataT = type(getattr(config,k))
-                    setattr(config, k, dict_cfg[k])
+                    setattr(config, k, dataT(dict_cfg[k]))
 
             #restore things that is from cmd line
             config.load_epoch = load_epoch
