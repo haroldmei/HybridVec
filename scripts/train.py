@@ -56,6 +56,7 @@ if __name__ == "__main__":
     writer, conf = init_experiment(config.__dict__)
     config.run_name = run_name
 
+    config.use_glove_init = False
     save_config(config)
     vocab = vocab.GloVe(name=config.vocab_source, dim=config.vocab_dim)
     print ('vocab dim', config.vocab_dim)
