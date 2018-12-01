@@ -3,9 +3,7 @@ import json
 import argparse
 from .loader import *
 
-""" 
-Please do not initialize a None for any field, 
-otherwise the type info will not be available, 
+""" Please do not initialize a None for any field, otherwise the type info will not be available, 
 """
 class base_config(object):
     def __init__ (self):
