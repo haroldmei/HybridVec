@@ -118,16 +118,21 @@ def load_config(eval = False):
     model_path = "outputs/{}".format(config.title)
     log_path = model_path + '/logs'
 
-    # config exist based on model and comment, use the saved one
+    # used for training, all configuration from command line
+    if eval == False:
+        return config
+
+    # config exist based on model and comment, use the saved one. called by evals
     config_path = log_path + "/{}-{}/config.json".format(config.run_name, config.run_comment)
     try:
         if os.path.exists(config_path):
             load_epoch = config.load_epoch
             with open(config_path) as f:
-                dict_cfg = dict(json.load(f))
+                json_cfg = dict(json.load(f))
+                # use dict_cfg, because of the nasty pymonitor put something new in
                 for k in dict_cfg:
                     dataT = type(getattr(config,k))
-                    setattr(config, k, dataT(dict_cfg[k]))
+                    setattr(config, k, dataT(json_cfg[k]))
 
             #restore things that is from cmd line
             config.load_epoch = load_epoch
