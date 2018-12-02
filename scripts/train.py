@@ -192,10 +192,10 @@ if __name__ == "__main__":
 
         config.load_epoch = epoch + 1
 
-        out_dir = "outputs/def2vec/checkpoints/{}".format(config.run_name)
+        out_dir = "outputs/def2vec/checkpoints/{}-{}".format(config.run_name, config.run_commennt)
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
-        out_path = "outputs/def2vec/checkpoints/{}/epoch_{}".format(config.run_name, epoch + 1)
+        out_path = "outputs/def2vec/checkpoints/{}-{}/epoch_{}".format(config.run_name, config.run_commennt, epoch + 1)
         if not os.path.exists(out_path):
             os.makedirs(out_path)
         torch.save(model.state_dict(), out_path + "/" + config.save_path)

@@ -11,7 +11,11 @@ import torchtext.vocab as vocab
 from hybridvec.loader import *
 from hybridvec.config import *
 from hybridvec.models import *
-from hybridvec.eval import evaluate_on_all
+#from hybridvec.eval import evaluate_on_all
+
+from web.embeddings import fetch_GloVe, load_embedding
+from web.datasets.utils import _get_dataset_dir
+from web.evaluate import evaluate_on_all
 
 import logging
 
@@ -59,7 +63,7 @@ def get_embeddings():
                                  config.input_method,
                                  config.vocab_dim,
                                  batch_size = config.batch_size,
-                                 num_workers = 1, #config.num_workers,
+                                 num_workers = 0, #config.num_workers,
                                  shuffle=False,
                                  vocab_size=config.vocab_size)
   if use_gpu:
