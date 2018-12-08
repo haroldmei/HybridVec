@@ -33,7 +33,9 @@ def weights_init_xavier(m):
         nn.init.xavier_normal(m.weight_ih_l0)
 
 if __name__ == "__main__":
-
+    """
+    python ./scripts/train.py --model_type seq2seq --run_name seq2seq --run_comment s2s300 --vocab_dim 300 --max_epoch 20 --print_freq=100 --cell_type LSTM --batch_size=64
+    """
     use_gpu = torch.cuda.is_available()
     print("Using GPU:", use_gpu)
 
@@ -62,7 +64,7 @@ if __name__ == "__main__":
 
     elif model_type == 'seq2seq':
         encoder = EncoderRNN(config = config,
-                            variable_lengths = False, 
+                            variable_lengths = True, # need to parameterized
                             embedding = None)
         decoder = DecoderRNN(config = config)
         model = Seq2seq(encoder = encoder, 
@@ -115,6 +117,9 @@ if __name__ == "__main__":
         print("Epoch", epoch)
         for i, data in enumerate(train_loader, 0):
             words, inputs, lengths, labels = data
+            if len(words) != config.batch_size:
+                continue
+                
             labels = Variable(labels)
 
             if use_gpu:
@@ -134,7 +139,8 @@ if __name__ == "__main__":
                 embed_outs = model.get_def_embeddings(outputs)
                 embed_labels = words
             else:
-                embed_outs = torch.cat([embed_outs, model.get_def_embeddings(outputs)])
+                embed_outs_append = model.get_def_embeddings(outputs)
+                embed_outs = torch.cat([embed_outs, embed_outs_append])
                 embed_labels += words
                 num_outs = embed_outs.shape[0]
                 if num_outs > config.embedding_log_size:

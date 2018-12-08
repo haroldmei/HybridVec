@@ -55,7 +55,7 @@ class Seq2seq(nn.Module):
                               encoder_outputs=encoder_outputs,
                               function=self.decode_function,
                               teacher_forcing_ratio=teacher_forcing_ratio)
-        return result, encoder_hidden[self.encoder.n_layers - 1]
+        return result, encoder_hidden[self.encoder.n_layers - 1], encoder_outputs
 
 
     def calculate_loss(self, inputs, output, labels, words):
@@ -65,7 +65,8 @@ class Seq2seq(nn.Module):
         norm_term = 0
         for step, step_output in enumerate(decoder_outputs):
             batch_size = inputs.shape[0]
-            if step > (inputs.shape[1] -1): continue
+            if step > (inputs.shape[1] - 1): 
+                continue
             labeled_vals = Variable((inputs).long()[:, step])
             labeled_vals.requires_grad = False
             pred = step_output.contiguous().view(batch_size, -1)
@@ -79,5 +80,5 @@ class Seq2seq(nn.Module):
         return acc_loss, batch_loss
     
     def get_def_embeddings(self, output):
-        (decoder_outputs, decoder_hidden, ret_dicts), encoder_hidden  = output
-        return encoder_hidden.data.cpu()
+        (decoder_outputs, decoder_hidden, ret_dicts), encoder_hidden, encoder_output  = output
+        return decoder_outputs, decoder_hidden[1].data.cpu()  #encoder_output.data.cpu(), encoder_hidden.data.cpu(), 

@@ -23,6 +23,11 @@ logger = logging.getLogger(__name__)
 def get_embeddings():
   config = load_config(eval=True)
 
+  #config.batch_size = 16
+  #config.dropout = 0
+  #config.packing = False
+  #config.input_method=INPUT_METHOD_ONE
+
   model_type = config.model_type
 
   TRAIN_FILE = 'data/glove/train_glove.%s.%sd.txt'%(config.vocab_source,config.vocab_dim)
@@ -61,28 +66,44 @@ def get_embeddings():
 
   for i, data in tqdm(enumerate(train_loader, 0), total=len(train_loader)):
       words, inputs, lengths, labels = data
+      if len(words) != config.batch_size:
+        continue
 
       if use_gpu:
           inputs = inputs.cuda()
 
       outputs = model(inputs, lengths)
       for idx, word in enumerate(words):
-        out_embeddings[word] = model.get_def_embeddings(outputs)[idx, :]
+        if model_type == 'seq2seq': #
+          dec_out, dec_embd = model.get_def_embeddings(outputs) #enc_out, enc_embd, 
+          #defn_en_out = torch.mean(enc_out, dim=1)[idx]
+          #en_embd = torch.mean(enc_embd, dim=0)[idx]
+          #out_embeddings[word] = torch.cat([defn_en_out, enc_embd[0,idx,:],enc_embd[1,idx,:]], -1)
+          out_embeddings[word] = dec_embd[:,idx,:]
+          #out_embeddings[word] = np.reshape(model.get_def_embeddings(outputs)[:, idx, :], (-1))
+          #out_embeddings[word] = model.decoder._init_state(embd)[idx, :]
+        else:
+          out_embeddings[word] = model.get_def_embeddings(outputs)[idx, :]
 
-  return out_embeddings
+  modelname = "{}-{}-{}".format(config.model_type, config.run_name, config.vocab_dim)
+  return out_embeddings, modelname
 
 def load_embeddings():
   a = np.load('./eval/out_embeddings.npy').item()
   return a
 
 def main():
-  embeddings = get_embeddings()
+  embeddings, name = get_embeddings()
   results = evaluate_on_all(embeddings)
-  out_fname = "results.csv"
+  out_fname = "{}.csv".format(name)
   logger.info("Saving results...")
   print(results)
   results.to_csv(out_fname)
 
 
+"""
+python ./scripts/intrinsic_evals.py --model_type seq2seq --run_name seq2seq_numworker_0 --load_epoch 20 --vocab_dim 300
+python ./scripts/intrinsic_evals.py --model_type baseline --run_name baseline --load_epoch 20 --vocab_dim 300
+"""
 if __name__ == "__main__":
   main()
