@@ -30,7 +30,7 @@ def get_embeddings():
 
   model_type = config.model_type
 
-  TRAIN_FILE = 'data/glove/train_glove.%s.%sd.txt'%(config.vocab_source,config.vocab_dim)
+  TRAIN_FILE = 'data/glove/val_glove.%s.%sd.txt'%(config.vocab_source,config.vocab_dim)
   vocab_1 = vocab.GloVe(name=config.vocab_source, dim=config.vocab_dim)
   use_gpu = torch.cuda.is_available()
   print("Using GPU:", use_gpu)
